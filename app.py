@@ -1,0 +1,28 @@
+import pandas as pd
+from flask import Flask, jsonify, request
+import pickle
+import keras
+import librosa
+import numpy as np
+import os
+model = keras.models.load_model(os.path.join("D:/mini project/flask/","Emotion_Voice_Detection_Model.h5"))
+
+
+app = Flask(__name__)
+
+@app.route('/', methods=['POST','GET'])
+
+def predict():
+    
+    file = request.files['file']
+    data, sampling_rate = librosa.load('/content/drive/My Drive/Ravdess/examples1.wav', res_type='kaiser_fast')
+    mfccs = np.mean(librosa.feature.mfcc(y=data, sr=sampling_rate, n_mfcc=40).T, axis=0)
+    x = np.expand_dims(mfccs, axis=-1)
+    x = np.expand_dims(x, axis=0)
+    result = model.predict(x)
+    output = {'results': result}
+
+    return jsonify(results=output)
+
+if __name__ == '__main__':
+    app.run(debug=True)
