@@ -1,6 +1,4 @@
-import pandas as pd
-from flask import Flask, jsonify, request
-import pickle
+from flask import Flask, jsonify
 import librosa
 from tensorflow import keras
 import numpy as np
