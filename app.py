@@ -10,17 +10,18 @@ model = keras.models.load_model(os.path.join("D:/mini project/flask/","Emotion_V
 
 app = Flask(__name__)
 
-@app.route('/', methods=['POST','GET'])
+@app.route('/<filename>', methods=['POST','GET'])
 
-def predict():
+def predict(filename):
     
     #file = request.files['file']
-    data, sampling_rate = librosa.load('D:/mini project/flask/examples2.wav', res_type='kaiser_fast')
+    data, sampling_rate = librosa.load(filename, res_type='kaiser_fast')
     mfccs = np.mean(librosa.feature.mfcc(y=data, sr=sampling_rate, n_mfcc=40).T, axis=0)
     x = np.expand_dims(mfccs, axis=-1)
     x = np.expand_dims(x, axis=0)
     result = model.predict_classes(x)
     
+    #return jsonify(result=str(result[0]))
     return jsonify(result=str(result[0]))
     #return str(result)
 
